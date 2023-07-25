@@ -84,22 +84,37 @@ function Price ({ price }) {
 }
 
 function Stock ({ stock }) {
-  return <p>{stock} left!</p>
+  return stock ? <p>{stock} left!</p> : <p className="text-danger">Out of stock</p>
 }
 
-function Buy ({ stock, quantity }) {
+function Buy ({ stock, quantity,  onBuy }) {
   return (
     <form>
       <div className="input-group mb-3">
-        <input type="number" className="form-control" placeholder="0"  min="1" max={stock} />
-        <button type="submit" className="btn btn-outline-secondary" >Buy</button>
+        <input type="number" className="form-control" placeholder="0"  min="1" max={stock} value={quantity}
+        onChange={(e) => onQtyChange(e.target.value)} />
+        <button type="submit" className="btn btn-outline-secondary" onClick={onBuy} >Buy</button>
       </div>
     </form>
   )
 }
 
 function Tshirt ({ tshirt }) {
+  const [stock, setStock] = React.useState(tshirt.stock)
+  const  [quantity, setQuantity] = React.useState(tshirt.quantity)
+  
+  function buyHandler() {
+    if(stock >= quantity) {
+      setStock(stock - quantity)
+      setQuantity(1)
+    }
+  }
  
+  function qtyChangeHandler(value){
+    setQuantity(value)
+  }
+
+
   return (
     <div className="col col-12 col-md-6 col-lg-4 my-3">
       <Image title={tshirt.title} image={tshirt.image} />
@@ -109,7 +124,11 @@ function Tshirt ({ tshirt }) {
 
       <div className="row">
         <div className="col-4">
-          <Buy stock={tshirt.stock} quantity={tshirt.quantity} />
+        <Buy 
+        stock={stock} 
+        quantity={quantity} 
+        onBuy={buyHandler}
+        onQtyChange={qtyChangeHandler} />
         </div>
       </div>
     </div>
